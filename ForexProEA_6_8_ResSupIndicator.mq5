@@ -71,7 +71,7 @@ CChartObjectRectangle *m_rec[];
 //typedef void (*TActionGeneric)(CZoneEdit &);
 
 template<typename X>;
-class CZoneEdit: public CBaseDialog
+class CZoneEdit//: public CBaseDialog
 {
     private:
         CBaseDialog m_dlg;
@@ -82,7 +82,8 @@ class CZoneEdit: public CBaseDialog
         {
             m_dlg.Destroy(reason);
         }
-        
+        int Left() {return m_dlg.Left();}
+        int Top() {return m_dlg.Top();}
         void ProcessEvent(const int id,       // event id
                 const long&   lparam, // chart period
                 const double& dparam, // price
@@ -92,10 +93,10 @@ class CZoneEdit: public CBaseDialog
             m_dlg.ProcessEvent(id,lparam,dparam,sparam);
         }
         
-        bool Init(TAction &zoneUp, TAction &zoneDown)
+        bool Init(TAction &zoneUp, TAction &zoneDown, int x, int y)
         {
-            int x = 20, y = 40;
-            if(!m_dlg.Create(0, "dlgSetting", 0, 20, y, 200, 260))
+            //int x = 20, y = 40;
+            if(!m_dlg.Create(0, "dlgSetting", 0, x, y, x + 200, y+260))
             {
                 Print("Cannot init dialog");
                 return false;
@@ -164,7 +165,8 @@ int OnInit()
     //PlotIndexSetInteger(5, PLOT_ARROW, 159);
     
     m_dynamicZone = InpZone;
-    LoadConfig();
+    int x = 20, y = 40;
+    LoadConfig(m_dynamicZone, x, y);
     
     m_zigzagHandler = iCustom(NULL, 0, "::Indicators\\Examples\\ZigZagColor",
                               InpDepth,5,3);
@@ -185,7 +187,7 @@ int OnInit()
         m_zoneEditGUI = new CZoneEdit();
         TAction actUp = ZoneUp;
         TAction actDown = ZoneDown;
-        if(!m_zoneEditGUI.Init(actUp, actDown))
+        if(!m_zoneEditGUI.Init(actUp, actDown, x, y))
             return INIT_FAILED;
     }
     
@@ -514,7 +516,8 @@ void OnDeinit(const int reason)
     
     if(InpUseDialogZoneEdit && m_zoneEditGUI != NULL)
         m_zoneEditGUI.Destroy(reason);
-    ClearAllGraph();
+    //ClearAllGraph();
+    m_zoneEditGUI = NULL;
     //ChartRedraw();
     //Print("BYE BYE BYE");
     
@@ -525,17 +528,47 @@ void SaveConfig()
     string configFile = "ressup\\zone_" + _Symbol + "_" + _Period + ".ini";
     string content = (string)m_dynamicZone;
     WriteFile(configFile, content);
+    
+    configFile = "ressup\\dialog_" + _Symbol + ".ini";
+    content = m_zoneEditGUI.Left() + ";" + m_zoneEditGUI.Top();
+    WriteFile(configFile, content);
 }
-void LoadConfig()
+
+void LoadConfig(int &dynamicZone, int &x1, int &y1)
 {
     string configFile = "ressup\\zone_" + _Symbol + "_" + _Period + ".ini";
-    string content = ReadFile(configFile);
-    if(content != "")
+    string content = "";
+    if(FileIsExist(configFile, FILE_COMMON))
     {
-        int zone = (int)StringToInteger(content);
-        if(zone > 0)
+        content = ReadFile(configFile);
+        if(content != "")
         {
-            m_dynamicZone = zone;
+            int zone = (int)StringToInteger(content);
+            if(zone > 0)
+            {
+                dynamicZone = zone;
+            }
+        }
+    }
+    
+    configFile = "ressup\\dialog_" + _Symbol + ".ini";
+    content = "";
+    if(FileIsExist(configFile, FILE_COMMON))
+    {
+        content = ReadFile(configFile);
+        if(content != "")
+        {
+            int zone = (int)StringToInteger(content);
+            if(zone > 0)
+            {
+                string segs[];
+                Split(content, ";", segs);
+                if(ArraySize(segs) >= 2)
+                {
+                    x1 = StringToInteger(segs[0]);
+                    y1 = StringToInteger(segs[1]);
+                }
+            }
         }
     }
 }
