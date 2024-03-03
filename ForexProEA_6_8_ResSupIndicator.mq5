@@ -519,7 +519,7 @@ void OnDeinit(const int reason)
     
     if(InpUseDialogZoneEdit && m_zoneEditGUI != NULL)
         m_zoneEditGUI.Destroy(reason);
-    //ClearAllGraph();
+    ClearAllGraph();
     m_zoneEditGUI = NULL;
     //ChartRedraw();
     //Print("BYE BYE BYE");
