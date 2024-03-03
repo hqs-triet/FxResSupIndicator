@@ -30,6 +30,16 @@ class CBaseDialog: public CAppDialog
         virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
         CBaseDialog();
         ~CBaseDialog(); 
+        bool MouseInsideDialog()
+        {
+            long x = m_mouseX, y = m_mouseY;
+            int l = Left(), r = Right(), t = Top(), b = Bottom();
+            //Print("x=" + x, " y=" + y + " left="+l + " right="+r+ " top=" + t + " bottom=" + b);
+            if(x >= l && x <= r
+                    && y >= t && y <= b)
+                return true;
+            return false;
+        }
         // ------------------------------------------------------------
         bool ProcessEvent(const int id,         // event id:
                       // if id-CHARTEVENT_CUSTOM=0-"initialization" event
@@ -42,8 +52,10 @@ class CBaseDialog: public CAppDialog
                 m_mouseX = lparam;
                 m_mouseY = (long)dparam;
             }
-            if(id == CHARTEVENT_CLICK)
+            if(id == CHARTEVENT_CLICK && MouseInsideDialog())
             {
+                //printf("CHARTEVENT_CLICK");
+                
                 m_mouseX = lparam;
                 m_mouseY = (long)dparam;
                 for(int i = ArraySize(actbtn) - 1; i >= 0; i--)
@@ -66,8 +78,8 @@ class CBaseDialog: public CAppDialog
                     }
                 }
             }
-            //this.ChartEvent(id,lparam,dparam,sparam);
-            this.OnEvent(id,lparam,dparam,sparam);
+            ChartEvent(id,lparam,dparam,sparam);
+            //this.OnEvent(id,lparam,dparam,sparam);
             
             return true;
         }

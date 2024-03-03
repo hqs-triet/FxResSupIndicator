@@ -71,7 +71,7 @@ CChartObjectRectangle *m_rec[];
 //typedef void (*TActionGeneric)(CZoneEdit &);
 
 template<typename X>;
-class CZoneEdit//: public CBaseDialog
+class CZoneEdit: public CBaseDialog
 {
     private:
         CBaseDialog m_dlg;
@@ -96,17 +96,17 @@ class CZoneEdit//: public CBaseDialog
         bool Init(TAction &zoneUp, TAction &zoneDown, int x, int y)
         {
             //int x = 20, y = 40;
-            if(!m_dlg.Create(0, "dlgSetting", 0, x, y, x + 200, y+260))
+            if(!m_dlg.Create(0, "dlgSetting", 0, x, y, x + 150, y+230))
             {
                 Print("Cannot init dialog");
                 return false;
             }
-            m_dlg.Caption("Edit zone");
+            m_dlg.Caption("Res/Sup - Zone");
             TAction actUp = zoneUp;
             TAction actDown = zoneDown;
             CButton *btnUp, *btnDown;
-            m_dlg.AddButton(btnUp, "Zone +", actUp, 40, 60, 100, 60, StringToColor("215,92,93"));
-            m_dlg.AddButton(btnDown, "Zone -", actDown, 40, 120, 100, 60, StringToColor("38,166,154"));
+            m_dlg.AddButton(btnUp, "Zone +", actUp, 20, 60, 100, 60, StringToColor("215,92,93"));
+            m_dlg.AddButton(btnDown, "Zone -", actDown, 20, 120, 100, 60, StringToColor("38,166,154"));
             m_dlg.AddLabel(m_lblZoneStatus, "Zone = "+ (string)m_dynamicZone, 20, 20);
             m_dlg.Run();
 
@@ -503,9 +503,12 @@ void OnChartEvent(const int id,       // event id
                 const string& sparam  // symbol
                )
 {
+    
     // Xử lý sự kiện cho các controls
     if(InpUseDialogZoneEdit && m_zoneEditGUI != NULL)
+    {
         m_zoneEditGUI.ProcessEvent(id,lparam,dparam,sparam);
+    }
     
 }
 
