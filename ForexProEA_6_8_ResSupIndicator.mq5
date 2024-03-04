@@ -71,7 +71,7 @@ CChartObjectRectangle *m_rec[];
 //typedef void (*TActionGeneric)(CZoneEdit &);
 
 template<typename X>;
-class CZoneEdit: public CBaseDialog
+class CZoneEdit//: public CBaseDialog
 {
     private:
         CBaseDialog m_dlg;

@@ -27,7 +27,7 @@ class CBaseDialog: public CAppDialog
         TAction actbtn[5];
     public:
         virtual bool      Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2);
-        virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
+        //virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
         CBaseDialog();
         ~CBaseDialog(); 
         bool MouseInsideDialog()
@@ -37,6 +37,15 @@ class CBaseDialog: public CAppDialog
             //Print("x=" + x, " y=" + y + " left="+l + " right="+r+ " top=" + t + " bottom=" + b);
             if(x >= l && x <= r
                     && y >= t && y <= b)
+                return true;
+            return false;
+        }
+        bool MouseInsideChart(const long chart = 0)
+        {
+            long height = ChartGetInteger(chart,CHART_HEIGHT_IN_PIXELS,0);
+            long width = ChartGetInteger(chart,CHART_WIDTH_IN_PIXELS,0);
+            long x = m_mouseX, y = m_mouseY;
+            if (x < width && y < height)
                 return true;
             return false;
         }
@@ -52,7 +61,7 @@ class CBaseDialog: public CAppDialog
                 m_mouseX = lparam;
                 m_mouseY = (long)dparam;
             }
-            if(id == CHARTEVENT_CLICK && MouseInsideDialog())
+            if(id == CHARTEVENT_CLICK)
             {
                 //printf("CHARTEVENT_CLICK");
                 
@@ -78,8 +87,9 @@ class CBaseDialog: public CAppDialog
                     }
                 }
             }
-            ChartEvent(id,lparam,dparam,sparam);
-            //this.OnEvent(id,lparam,dparam,sparam);
+            if(MouseInsideChart())
+                ChartEvent(id,lparam,dparam,sparam);
+            //OnEvent(id,lparam,dparam,sparam);
             
             return true;
         }
@@ -133,9 +143,9 @@ class CBaseDialog: public CAppDialog
 //+------------------------------------------------------------------+
 //| Event Handling                                                   |
 //+------------------------------------------------------------------+
-EVENT_MAP_BEGIN(CBaseDialog)
+//EVENT_MAP_BEGIN(CBaseDialog)
 //ON_EVENT(ON_CLICK, btn[0], OnClick_btn0)
-EVENT_MAP_END(CAppDialog)
+//EVENT_MAP_END(CAppDialog)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
